@@ -1,142 +1,133 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+"""
+This is the command interpreter for managing
+instances of BaseModel
+"""
+
 import cmd
-from models import storage
+from models.base_model import BaseModel
+from models.engine.file_storage import FileStorage
+from sys import stdin
 from models.user import User
 
+
 class HBNBCommand(cmd.Cmd):
-    """Class for the command-line interpreter."""
-
+    """
+    Command interpreter class for managing instances
+    """
     prompt = "(hbnb) "
+    storage = FileStorage()
+    storage.reload()
 
-    def do_quit(self, arg):
-        """Quit command to exit the program."""
-        return True
+    if stdin.isatty() is False:
+        prompt = "(hbnb) \n"
 
-    def do_EOF(self, arg):
-        """Handle EOF signal."""
-        print('')
-        return True
+    def __init__(self):
+        super().__init__()
 
-    def emptyline(self):
-        """Called when an empty line is entered."""
-        pass
-
-    def create(self, arg):
-        """Create command to create a new instance of a class.
-
-        Args:
-            arg (str): Arguments passed along with the create command.
-        """
-        args = arg.split()
-        if not args:
+    
+    def do_create(self, arg):
+        """Creeates a new instance of BaseModel"""
+        if not arg:
             print("** class name missing **")
             return
-        class_name = args[0]
-        if class_name not in storage.classes():
+
+        try:
+            obj = eval(arg)()
+            obj.save()
+            print(obj.id)
+        except NameError:
             print("** class doesn't exist **")
-            return
-        new_instance = storage.classes()[class_name]()
-        for param in args[1:]:
-            key, value = param.split('=')
-            setattr(new_instance, key, value)
-        new_instance.save()
-        print(new_instance.id)
 
-    def show(self, arg):
-        """Show command to display information about an instance.
+    def do_show(self, arg):
+        """prints the string representation of an instance based on the class name and id"""
 
-        Args:
-            arg (str): Arguments passed along with the show command.
-        """
         args = arg.split()
-        if not args:
-            print("** class name missing **")
-            return
         class_name = args[0]
-        if class_name not in storage.classes():
-            print("** class doesn't exist **")
-            return
-        if len(args) < 2:
-            print("** instance id missing **")
-            return
-        instance_id = args[1]
-        key = "{}.{}".format(class_name, instance_id)
-        if key in storage.all():
-            print(storage.all()[key])
-        else:
-            print("** no instance found **")
+        instance_key = "{}.{}".format(class_name, args[1])
+        objects = self.storage.all()
+        self.class_name_validator(arg)
 
-    def destroy(self, arg):
-        """Destroy command to delete an instance.
+        print(objects[instance_key])
 
-        Args:
-            arg (str): Arguments passed along with the destroy command.
-        """
+    def do_destroy(self, arg):
+        """Destroy an instance of based on the class name and id and save changes"""
+
         args = arg.split()
-        if not args:
-            print("** class name missing **")
-            return
         class_name = args[0]
-        if class_name not in storage.classes():
-            print("** class doesn't exist **")
-            return
-        if len(args) < 2:
-            print("** instance id missing **")
-            return
-        instance_id = args[1]
-        key = "{}.{}".format(class_name, instance_id)
-        if key in storage.all():
-            del storage.all()[key]
-            storage.save()
-        else:
-            print("** no instance found **")
+        instance_key = "{}.{}".format(class_name, args[1])
+        objects = self.storage.all()
+        self.class_name_validator()
 
-    def all(self, arg):
-        """All command to display all instances of a class.
+        del objects[instance_key]
+        self.storage.save()
 
-        Args:
-            arg (str): Arguments passed along with the all command.
-        """
+    def do_all(self, arg):
+        """Prints all string representation of all instances based or not class name"""
+        class_name = None
+
+        if arg:
+            class_name = arg.split()[0]
+            if class_name not in self.storage.classes():
+                print("** class doesn't exist **")
+                return
+        objects = self.storage.all()
+        if class_name:
+            objects = {k: v for k, v in objects.items() if k.split('.')[0] == class_name}
+
+        print([str(v) for v in objects.values()])
+
+    def do_update(self, arg):
         args = arg.split()
-        if args and args[0] not in storage.classes():
-            print("** class doesn't exist **")
-            return
-        instances = [str(v) for k, v in storage.all().items() if not args or k.split('.')[0] == args[0]]
-        print(instances)
-
-    def update(self, arg):
-        """Update command to update attributes of an instance.
-
-        Args:
-            arg (str): Arguments passed along with the update command.
-        """
-        args = arg.split()
-        if not args:
-            print("** class name missing **")
-            return
+        objects = self.storage.all()
         class_name = args[0]
-        if class_name not in storage.classes():
-            print("** class doesn't exist **")
-            return
-        if len(args) < 2:
-            print("** instance id missing **")
-            return
-        instance_id = args[1]
-        key = "{}.{}".format(class_name, instance_id)
-        if key not in storage.all():
-            print("** no instance found **")
-            return
-        if len(args) < 3:
+        instance_key = "{}.{}".format(class_name, args[1])
+
+
+        self.class_name_validator()
+
+        if len(args) < 4:
             print("** attribute name missing **")
             return
-        if len(args) < 4:
+
+        attr_name = args[2]
+
+        if len(args) < 5:
             print("** value missing **")
             return
-        attribute_name = args[2]
-        attribute_value = args[3]
-        obj = storage.all()[key]
-        setattr(obj, attribute_name, attribute_value)
-        obj.save()
+
+        attr_value = args[3]
+
+        if hasattr(objects[instance_key], attr_name):
+            setattr(objects[instance_key], attr_name, attr_value)
+            objects[instance_key].save()
+        else:
+            print("** attribute doesn't exist **")
+
+    def class_name_validator(self, arg):
+        """Validates the presence of an instance  and it's id"""
+
+        args = arg.split()
+        if not args:
+            print("** class name missing **")
+            return
+
+        class_name = args[0]
+
+        if class_name not in self.storage.classes():
+            print("** class doesn't exist **")
+            return
+
+        if len(args) < 2:
+            print("** instance id missing **")
+            return
+
+        instance_key = "{}.{}".format(class_name, args[1])
+        objects = self.storage.all()
+
+        if instance_key not in objects:
+            print("** no instance found **")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
