@@ -5,7 +5,7 @@ instances of BaseModel
 """
 
 import cmd
-from .models.engine.file_storage import FileStorage
+from models.engine.file_storage import FileStorage
 from sys import stdin
 from .models.user import User
 
