@@ -15,6 +15,8 @@ class HBNBCommand(cmd.Cmd):
     """
     Command interpreter class for managing instances
     """
+
+
     prompt = "(hbnb) "
     storage = FileStorage()
     storage.reload()
@@ -23,6 +25,7 @@ class HBNBCommand(cmd.Cmd):
         prompt = "(hbnb) \n"
 
     def __init__(self):
+        """Initialise console"""
         super().__init__()
 
 
@@ -64,8 +67,8 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """Prints all string representation of all instances based or not class name"""
-        class_name = None
 
+        class_name = None
         if arg:
             class_name = arg.split()[0]
             if class_name not in self.storage.classes():
@@ -78,24 +81,22 @@ class HBNBCommand(cmd.Cmd):
         print([str(v) for v in objects.values()])
 
     def do_update(self, arg):
+        """Updates the engine for an instance added or removed"""
+
         args = arg.split()
         objects = self.storage.all()
         class_name = args[0]
         instance_key = "{}.{}".format(class_name, args[1])
 
-
         self.class_name_validator()
-
         if len(args) < 4:
             print("** attribute name missing **")
             return
 
         attr_name = args[2]
-
         if len(args) < 5:
             print("** value missing **")
             return
-
         attr_value = args[3]
 
         if hasattr(objects[instance_key], attr_name):
@@ -113,33 +114,38 @@ class HBNBCommand(cmd.Cmd):
             return
 
         class_name = args[0]
-
         if class_name not in self.storage.classes():
             print("** class doesn't exist **")
             return
-
         if len(args) < 2:
             print("** instance id missing **")
             return
 
         instance_key = "{}.{}".format(class_name, args[1])
         objects = self.storage.all()
-
         if instance_key not in objects:
             print("** no instance found **")
 
     def emptyline(self):
+        """Emptyline entered"""
+
         pass
 
     def do_help(self, arg):
+        """Help for console"""
+
         return super().do_help(arg)
 
     def do_quit(self, arg):
+        """Quit console"""
+
         return True
 
     def do_EOF(self, arg):
+        """End of file of a console"""
+        
         return True
-    
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
