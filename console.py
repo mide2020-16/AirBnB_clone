@@ -5,7 +5,6 @@ instances of BaseModel
 """
 
 import cmd
-from .models.base_model import BaseModel
 from .models.engine.file_storage import FileStorage
 from sys import stdin
 from .models.user import User
@@ -143,7 +142,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_EOF(self, arg):
         """End of file of a console"""
-        
+
         return True
 
 
