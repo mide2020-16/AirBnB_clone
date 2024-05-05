@@ -5,10 +5,10 @@ instances of BaseModel
 """
 
 import cmd
-from models.base_model import BaseModel
-from models.engine.file_storage import FileStorage
+from .models.base_model import BaseModel
+from .models.engine.file_storage import FileStorage
 from sys import stdin
-from models.user import User
+from .models.user import User
 
 
 class HBNBCommand(cmd.Cmd):
@@ -25,7 +25,7 @@ class HBNBCommand(cmd.Cmd):
     def __init__(self):
         super().__init__()
 
-    
+
     def do_create(self, arg):
         """Creeates a new instance of BaseModel"""
         if not arg:
@@ -128,6 +128,18 @@ class HBNBCommand(cmd.Cmd):
         if instance_key not in objects:
             print("** no instance found **")
 
+    def emptyline(self):
+        pass
+
+    def do_help(self, arg):
+        return super().do_help(arg)
+
+    def do_quit(self, arg):
+        return True
+
+    def do_EOF(self, arg):
+        return True
+    
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
