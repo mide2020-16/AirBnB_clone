@@ -1,18 +1,15 @@
 #!/usr/bin/python3
-"""Module for Amenity class."""
+"""
+Amenity class, a subclass of BaseModel
+"""
 from models.base_model import BaseModel
 
 
 class Amenity(BaseModel):
-    """Amenity class that inherits from BaseModel."""
+    """
+    A subclass of BaseModel class
+    Public class attribute:
+        name: (str)
+    """
 
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor for Amenity class.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-        """
-        super().__init__(*args, **kwargs)
-        self.name = ""
+    name = ""

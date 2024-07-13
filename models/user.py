@@ -1,21 +1,15 @@
 #!/usr/bin/python3
+"""user class, subclass of BaseModel
+"""
 
 from models.base_model import BaseModel
+import json
+
 
 class User(BaseModel):
-    """User class that inherits from BaseModel."""
+    """subclass of BaseModel class"""
 
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor for User class.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-        """
-        super().__init__(*args, **kwargs)
-
-        self.email = ""
-        self.password = ""
-        self.first_name = ""
-        self.last_name = ""
+    email = ""
+    password = ""
+    first_name = ""
+    last_name = ""

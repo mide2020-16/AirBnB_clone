@@ -1,20 +1,19 @@
 #!/usr/bin/python3
-"""Module for Review class."""
+"""
+Review class, a subclass of BaseModel class
+"""
 from models.base_model import BaseModel
 
 
 class Review(BaseModel):
-    """Review class that inherits from BaseModel."""
+    """
+    A subclass of BaseModel class
+    Public class attributes:
+        place_id:            (str) will be Place.id
+        user_id:             (str) will be User.id
+        text:                (str)
+    """
 
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor for Review class.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-        """
-        super().__init__(*args, **kwargs)
-        self.place_id = ""
-        self.user_id = ""
-        self.text = ""
+    place_id = ""
+    user_id = ""
+    text = ""

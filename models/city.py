@@ -1,19 +1,17 @@
 #!/usr/bin/python3
-"""Module for City class."""
+"""
+City class, a subclass of BaseModel
+"""
 from models.base_model import BaseModel
 
 
 class City(BaseModel):
-    """City class that inherits from BaseModel."""
+    """
+    A subclass of BaseModel class
+    Public class attributes:
+        state_id: (str) will be State.id
+        name:     (str)
+    """
 
-    def __init__(self, *args, **kwargs):
-        """
-        Constructor for City class.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-        """
-        super().__init__(*args, **kwargs)
-        self.state_id = ""
-        self.name = ""
+    state_id = ""
+    name = ""

@@ -2,7 +2,7 @@
 
 ## Description
 
-This project is a practice project to reprodce the airbnb of real time
+This project is a practice project to reproduce the airbnb of real time
 
 ## Uses
 
